@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/index.js",
-    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" NODE_ENV=TEST npx jest"
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" NODE_ENV=TEST npx jest",
+    "migrate": "npm i sequelize-cli && npx sequelize-cli db:migrate --env $NODE_ENV"
   },
   "author": "N-pacis",
   "dependencies": {
@@ -21,6 +22,7 @@
     "nodemon": "^2.0.7",
     "pg": "^8.11.3",
     "sequelize": "^6.28.0",
+    "sequelize-cli": "^6.6.2",
     "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.7",
     "swagger-ui-express": "^4.6.0",

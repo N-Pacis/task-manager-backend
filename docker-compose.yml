@@ -1,24 +1,30 @@
 version: '3'
 
 services:
-  task-management-app:
-    image: node:18
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=PROD
-      - PROD_DB_HOST=task-management-db
-      - PROD_DB_NAME=task_management_db
-      - PROD_DB_USER=postgres
-      - PROD_DB_PASSWORD=test@123
-    working_dir: /app
-    command: sh -c "npm install --production && npm start"
-
   task-management-db:
     image: postgres:latest
     ports:
       - "5432:5432"
     environment:
+      - POSTGRES_DB=task_management_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=test_123
+
+  task-management-app:
+    image: node:18
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=PROD
+      - PROD_DB_HOST=task-management-db
       - PROD_DB_NAME=task_management_db
       - PROD_DB_USER=postgres
-      - PROD_DB_PASSWORD=test@123
+      - PROD_DB_PASSWORD=test_123
+      - PROD_DB_PORT=5432
+      - JWT_KEY=KSJAB_2023!_JWT_KEY
+    working_dir: /app 
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run migrate && npm start"
+    depends_on:
+      - task-management-db
