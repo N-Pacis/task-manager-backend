@@ -1,0 +1,315 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Task Tracker is an innovative solution that transforms your daily task management experience. With a focus on encouraging concentrated work and effective prioritization, this app allows users to set and prioritize daily tasks seamlessly. Task Tracker goes beyond traditional 'to-do list' or task management apps by providing quick insights into your progress and overall daily completion status.\n\nMade with ❤️ by Nkubito Pacis",
+        "title": "Task Tracker",
+        "contact": {
+            "name": "Nkubito Pacis",
+            "email": "pacisnkubito@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "tags": [
+        {
+            "name": "USER OPERATIONS",
+            "description": "Operations on users"
+        },
+        {
+            "name": "TASK OPERATIONS",
+            "description": "Operations on tasks"
+        }
+    ],
+    "security": [
+        {
+            "Bearer": []
+        }
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "auth-token",
+            "in": "header",
+            "bearerFormat": "JWT",
+            "scheme": "bearer"
+        }
+    },
+    "paths": {
+        "/users/login": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "type": "object",
+                        "consumes": "application/json",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "required": "true"
+                            },
+                            "password": {
+                                "type": "string",
+                                "required": "true"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/users/register": {
+            "post": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "type": "object",
+                        "consumes": "application/json",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "required": "true"
+                            },
+                            "password": {
+                                "type": "string",
+                                "required": "true"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/users/profile": {
+            "get": {
+                "tags": [
+                    "USER OPERATIONS"
+                ],
+                "summary": "Get user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tasks": {
+            "get": {
+                "tags": [
+                    "TASK OPERATIONS"
+                ],
+                "summary": "Get All Tasks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tasks/by-id/{id}": {
+            "get": {
+                "tags": [
+                    "TASK OPERATIONS"
+                ],
+                "summary": "Get Task by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "number",
+                        "required": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tasks/change-status/{id}/{status}": {
+            "put": {
+                "tags": [
+                    "TASK OPERATIONS"
+                ],
+                "summary": "Change Task status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "number",
+                        "required": "true"
+                    },
+                    {
+                        "in": "path",
+                        "name": "status",
+                        "type": "string",
+                        "enum": ["PENDING","COMPLETED"],
+                        "required": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/tasks/create": {
+            "post": {
+                "tags": [
+                    "TASK OPERATIONS"
+                ],
+                "summary": "Create task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "type": "object",
+                        "consumes": "application/json",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "required": "true"
+                            },
+                            "description": {
+                                "type": "string",
+                                "required": "true"
+                            },
+                            "parent_task_id": {
+                                "type": "number",
+                                "required": "true"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    }
+}

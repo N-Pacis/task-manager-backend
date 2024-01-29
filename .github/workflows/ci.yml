@@ -1,0 +1,65 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - '5432:5432'
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
+      DB_DIALECT: postgres
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up environment variables
+        run: |
+          echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
+          echo "DB_PORT=${DB_PORT}" >> $GITHUB_ENV
+          echo "DB_USER=${DB_USER}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
+          echo "DB_NAME=${DB_NAME}" >> $GITHUB_ENV
+          echo "JWT_KEY=${JWT_KEY}" >> $GITHUB_ENV
+          echo "DB_DIALECT=${DB_DIALECT}" >> $GITHUB_ENV
+
+      - name: Install dockerize
+        run: |
+          wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+          tar -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
+          sudo mv dockerize /usr/local/bin/dockerize
+          rm dockerize-linux-amd64-v0.6.1.tar.gz
+
+      - name: Install sequelize-cli
+        run: npm install -g sequelize-cli
+
+      - name: Wait for PostgreSQL to be ready
+        run: dockerize -wait tcp://${DB_HOST}:${DB_PORT} -timeout 1m
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Sequelize migrations
+        run: npx sequelize-cli db:migrate --env actions
+      
+      - name: Run tests
+        run: npm test
