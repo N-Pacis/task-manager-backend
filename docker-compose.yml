@@ -24,6 +24,7 @@ services:
       PROD_DB_HOST: task-management-db
       PROD_DB_PORT: 5432
       JWT_KEY: $JWT_KEY
+      DB_DIALECT: postgresql
     working_dir: /app
     volumes:
       - .:/app
