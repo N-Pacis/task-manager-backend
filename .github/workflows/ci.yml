@@ -77,11 +77,12 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
           # Set environment variables on the server
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_USER=${{ secrets.DB_USER }}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_NAME=${{ secrets.DB_NAME }}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export JWT_KEY=${{ secrets.JWT_KEY }}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_DIALECT=postgresql"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_USER=${{ secrets.DB_USER }}" | tee -a ~/.bashrc'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" | tee -a ~/.bashrc'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_NAME=${{ secrets.DB_NAME }}" | tee -a ~/.bashrc'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "JWT_KEY=${{ secrets.JWT_KEY }}" | tee -a ~/.bashrc'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_DIALECT=postgresql" | tee -a ~/.bashrc'
+        
 
       - name: Check if directory exists on EC2
         run: |
