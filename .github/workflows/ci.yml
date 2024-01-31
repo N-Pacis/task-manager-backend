@@ -93,6 +93,7 @@ jobs:
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "echo 'export DB_NAME=${DB_NAME}' >> ~/.bashrc"
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "echo 'export JWT_KEY=${JWT_KEY}' >> ~/.bashrc"
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "echo 'export DB_DIALECT=${DB_DIALECT}' >> ~/.bashrc"
+          source ~/.bashrc 
 
       - name: Check if directory exists on EC2
         run: |
