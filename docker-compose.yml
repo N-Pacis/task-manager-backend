@@ -24,7 +24,7 @@ services:
       PROD_DB_NAME: ${DB_NAME}
       PROD_DB_USER: ${DB_USER}
       PROD_DB_PASSWORD: ${DB_PASSWORD}
-      PROD_DB_PORT: ${DB_PORT}
+      PROD_DB_PORT: 5432
       JWT_KEY: ${JWT_KEY}
     working_dir: /app
     volumes:
