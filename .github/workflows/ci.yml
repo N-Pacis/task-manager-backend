@@ -85,14 +85,6 @@ jobs:
           test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
 
-          # Set environment variables on the server
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export DB_USER=${DB_USER}'
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export DB_PASSWORD=${DB_PASSWORD}'
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export DB_NAME=${DB_NAME}'
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export JWT_KEY=testingjwt123'
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export DB_DIALECT=${DB_DIALECT}'
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export TESTING_ENV=123'
-
       - name: Check if directory exists on EC2
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} '[ -d task-manager/ ] && cd task-manager && git pull || git clone https://github.com/N-Pacis/task-manager-backend.git task-manager/'
@@ -103,6 +95,6 @@ jobs:
 
       - name: Run Docker Compose Command
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && sudo docker-compose up -d'
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'export DB_USER=${DB_USER} && export DB_PASSWORD=${DB_PASSWORD} && export DB_NAME=${DB_NAME} && export JWT_KEY=${JWT_KEY} && export DB_DIALECT=${DB_DIALECT} &&  cd task-manager && sudo docker-compose up -d'
 
 
