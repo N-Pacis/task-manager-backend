@@ -83,7 +83,11 @@ jobs:
       - name: Check if directory exists on EC2
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} '[ -d task-manager/ ] && cd task-manager && git pull || git clone https://github.com/N-Pacis/task-manager-backend.git task-manager/'
-        
+
+      - name: Install Docker and Docker Compose on EC2
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'sudo apt-get update && sudo apt-get install -y docker.io docker-compose'
+
       - name: Run Docker Compose Command
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && docker-compose up -d'
