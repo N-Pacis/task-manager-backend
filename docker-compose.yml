@@ -9,6 +9,8 @@ services:
       - POSTGRES_DB=task_management_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=test_123
+    volumes:
+      - pg-data:/var/lib/postgresql/data
 
   task-management-app:
     image: node:18
@@ -28,3 +30,6 @@ services:
     command: sh -c "npm install && npm run migrate && npm start"
     depends_on:
       - task-management-db
+
+volumes:
+  pg-data:
