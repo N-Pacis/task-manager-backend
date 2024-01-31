@@ -6,9 +6,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
@@ -21,11 +21,11 @@ services:
     environment:
       NODE_ENV: PROD
       PROD_DB_HOST: task-management-db
-      PROD_DB_NAME: ${DB_NAME}
-      PROD_DB_USER: ${DB_USER}
-      PROD_DB_PASSWORD: ${DB_PASSWORD}
+      PROD_DB_NAME: $DB_NAME
+      PROD_DB_USER: $DB_USER
+      PROD_DB_PASSWORD: $DB_PASSWORD
       PROD_DB_PORT: 5432
-      JWT_KEY: ${JWT_KEY}
+      JWT_KEY: $JWT_KEY
     working_dir: /app
     volumes:
       - .:/app
