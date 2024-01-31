@@ -6,9 +6,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: $DB_NAME
-      POSTGRES_USER: $DB_USER
-      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: task_management_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pacis123
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
