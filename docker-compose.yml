@@ -11,6 +11,8 @@ services:
       - POSTGRES_PASSWORD=test_123
     volumes:
       - pg-data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
 
   task-management-app:
     image: node:18
@@ -30,6 +32,12 @@ services:
     command: sh -c "npm install && npm run migrate && npm start"
     depends_on:
       - task-management-db
+    networks:
+      - mynetwork
 
 volumes:
   pg-data:
+
+networks:
+  mynetwork:
+    driver: bridge
