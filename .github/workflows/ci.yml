@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      EC2_HOST:  ${{ secrets.EC2_HOST }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
     steps:
@@ -90,4 +90,4 @@ jobs:
 
       - name: Run Docker Compose Command
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && docker-compose up -d'
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && sudo docker-compose up -d'
