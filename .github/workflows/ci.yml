@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH key And Environment Variables
+      - name: Set up SSH key
         run: |
           test -d ~/.ssh || mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
@@ -76,17 +76,21 @@ jobs:
           test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-          # Set environment variables on the server
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_USER=${{ secrets.DB_USER }}" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_NAME=${{ secrets.DB_NAME }}" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "JWT_KEY=${{ secrets.JWT_KEY }}" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_DIALECT=postgresql" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "source ~/.bashrc"
-
       - name: Check if directory exists on EC2
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} '[ -d task-manager/ ] && cd task-manager && git pull || git clone https://github.com/N-Pacis/task-manager-backend.git task-manager/'
+
+      - name: Create .env file
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "PROD_DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "PROD_DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "PROD_DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> .env
+
+      - name: Transfer .env file to EC2
+        run: |
+          scp -i ~/.ssh/id_rsa .env ubuntu@${{ secrets.EC2_HOST }}:task-manager/.env
 
       - name: Install Docker and Docker Compose on EC2
         run: |
