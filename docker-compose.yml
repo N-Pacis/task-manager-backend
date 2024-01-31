@@ -6,9 +6,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=task_management_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=test_123
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
@@ -19,14 +19,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - NODE_ENV=PROD
-      - PROD_DB_HOST=task-management-db
-      - PROD_DB_NAME=task_management_db
-      - PROD_DB_USER=postgres
-      - PROD_DB_PASSWORD=test_123
-      - PROD_DB_PORT=5432
-      - JWT_KEY=KSJAB_2023!_JWT_KEY
-    working_dir: /app 
+      NODE_ENV: PROD
+      PROD_DB_HOST: ${DB_HOST}
+      PROD_DB_NAME: ${DB_NAME}
+      PROD_DB_USER: ${DB_USER}
+      PROD_DB_PASSWORD: ${DB_PASSWORD}
+      PROD_DB_PORT: ${DB_PORT}
+      JWT_KEY: ${JWT_KEY}
+    working_dir: /app
     volumes:
       - .:/app
     command: sh -c "npm install && npm run migrate && npm start"
