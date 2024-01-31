@@ -102,6 +102,6 @@ jobs:
 
       - name: Run Docker Compose Command
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && sudo DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} JWT_KEY=${JWT_KEY} DB_DIALECT=${DB_DIALECT} docker-compose up -d'
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && sudo DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} JWT_KEY=${JWT_KEY} DB_DIALECT=${DB_DIALECT} docker-compose up'
 
 
