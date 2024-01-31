@@ -70,7 +70,7 @@ jobs:
     env:
       EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      DB_USER: ${{ secrets.DB_USER }}
+      DB_USER: postgres
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
       JWT_KEY: ${{ secrets.JWT_KEY }}
