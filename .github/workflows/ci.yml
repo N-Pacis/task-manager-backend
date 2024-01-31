@@ -82,7 +82,7 @@ jobs:
           ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_NAME=${{ secrets.DB_NAME }}" | tee -a ~/.bashrc'
           ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "JWT_KEY=${{ secrets.JWT_KEY }}" | tee -a ~/.bashrc'
           ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'echo "DB_DIALECT=postgresql" | tee -a ~/.bashrc'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'source ~/.bashrc'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "source ~/.bashrc"
 
       - name: Check if directory exists on EC2
         run: |
