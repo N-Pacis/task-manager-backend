@@ -70,7 +70,7 @@ jobs:
     env:
       EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      DB_USER: postgres
+      DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
       JWT_KEY: ${{ secrets.JWT_KEY }}
@@ -86,8 +86,8 @@ jobs:
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
 
           # Set environment variables on the server
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_USER=${DB_USER}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_PASSWORD=${DB_PASSWORD}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_USER=postgres"
+          ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_PASSWORD=pacis123"
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_NAME=${DB_NAME}"
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export JWT_KEY=${JWT_KEY}"
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} "export DB_DIALECT=${DB_DIALECT}"
