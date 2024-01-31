@@ -75,10 +75,12 @@ jobs:
     steps:
       - name: Set up SSH key
         run: |
-          mkdir -p ~/.ssh
+          test -d ~/.ssh || mkdir -p ~/.ssh
           echo "${EC2_SSH_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
+
 
       - name: Check if directory exists on EC2
         run: |
@@ -92,4 +94,3 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@${EC2_HOST} 'cd task-manager && sudo docker-compose up -d'
 
-          
