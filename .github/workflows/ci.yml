@@ -67,15 +67,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
 
-    env:
-      EC2_HOST: ${{ secrets.EC2_HOST }}
-      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      JWT_KEY: ${{ secrets.JWT_KEY }}
-      DB_DIALECT: postgresql
-
     steps:
       - name: Set up SSH key And Environment Variables
         run: |
@@ -86,11 +77,11 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
           # Set environment variables on the server
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_USER=${DB_USER}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_PASSWORD=${DB_PASSWORD}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_NAME=${DB_NAME}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export JWT_KEY=${JWT_KEY}"
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_DIALECT=${DB_DIALECT}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_USER=${{ secrets.DB_USER }}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_NAME=${{ secrets.DB_NAME }}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export JWT_KEY=${{ secrets.JWT_KEY }}"
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "export DB_DIALECT=postgresql"
 
       - name: Check if directory exists on EC2
         run: |
