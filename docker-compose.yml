@@ -19,6 +19,7 @@ services:
     ports:
       - "5000:5000"
     environment:
+      PORT: 5000
       NODE_ENV: PROD
       PROD_DB_HOST: task-management-db
       PROD_DB_NAME: $DB_NAME
