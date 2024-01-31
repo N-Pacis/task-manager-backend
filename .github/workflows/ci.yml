@@ -97,4 +97,4 @@ jobs:
 
       - name: Run Docker Compose Command
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'cd task-manager && sudo docker-compose up -d'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} 'cd task-manager && chmod 600 .env && sudo docker-compose up -d'
