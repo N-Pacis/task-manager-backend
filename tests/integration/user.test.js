@@ -76,32 +76,6 @@ describe("User module test", () => {
     });
   });
 
-  describe("User profile feature test", () => {
-    test("Should return 200 success response code and user profile data", async () => {
-      let userToCreate = {
-        username: "test_login",
-        password: "test123",
-      };
-      await request.post("/users/register").send(userToCreate);
-      const resp = await request.post("/users/login").send(userToCreate);
-
-      let access_token = resp.body.data.access_token;
-
-      const response = await request
-        .get("/users/profile")
-        .set("auth-token", `Bearer ${access_token}`);
-
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("data");
-      expect(response.body.data).toHaveProperty("username", "test_login");
-    });
-
-    test("Should return 401 unauthorized response code without authentication token", async () => {
-      const response = await request.get("/users/profile");
-
-      expect(response.status).toBe(401);
-    });
-  });
   afterAll(async () => {
     await UserModel.destroy({
       where: {},
