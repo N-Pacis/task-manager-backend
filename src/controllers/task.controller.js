@@ -6,6 +6,7 @@ import {
   successResponse,
 } from '../utils/api.response.js';
 import TaskModel from '../models/task.model.js';
+import { Op } from 'sequelize';
 
 export const createTask = async (req, res) => {
   try {
@@ -85,23 +86,106 @@ export const getTasks = async (req, res) => {
   }
 };
 
-export const changeTaskStatus = async (req, res) => {
-  let { id, status } = req.params;
-  let findTaskById = await TaskModel.findByPk(id);
-  if (!findTaskById) return notFoundResponse('id', id, 'Task');
+export const getCompletionSummaryForDay = async (req, res) => {
+  try {
+    const { day } = req.params;
 
-  if (status != 'PENDING' && status != 'COMPLETED')
-    return errorResponse(
-      `Invalid status: ${status} supplied! You should provide either PENDING or COMPLETED`,
-      res
+    if (!day || !/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+      return errorResponse('Invalid date format. Please provide a valid date in YYYY-MM-DD format.', res);
+    }
+
+    const startOfDay = new Date(day);
+    const endOfDay = new Date(day);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const completedTasks = await TaskModel.findAll({
+      where: {
+        status: 'COMPLETED',
+        updatedAt: {
+          [Op.between]: [startOfDay, endOfDay],
+        },
+      },
+    });
+
+    const summary = {
+      date: day,
+      totalCompletedTasks: completedTasks.length,
+      completedTasks
+    };
+
+    return successResponse('Completion summary retrieved successfully', summary, res);
+  } catch (error) {
+    console.log(error)
+    return serverErrorResponse(error, res);
+  }
+};
+
+export const changeTaskStatus = async (req, res) => {
+  try {
+    let { id, status } = req.params;
+    let findTaskById = await TaskModel.findByPk(id, { include: 'subTasks' });
+
+    if (!findTaskById) return notFoundResponse('id', id, 'Task');
+
+    if (status !== 'PENDING' && status !== 'COMPLETED') {
+      return errorResponse(
+        `Invalid status: ${status} supplied! You should provide either PENDING or COMPLETED`,
+        res
+      );
+    }
+
+    await TaskModel.update(
+      {
+        status: status,
+      },
+      { where: { id: id } }
     );
+
+    if (findTaskById.parent_task_id) {
+      await updateParentTaskStatus(findTaskById.parent_task_id);
+    }
+
+    await updateChildTasksStatus(id, status);
+
+    return successResponse('Task status updated', null, res);
+  } catch (error) {
+    console.error(error);
+    return serverErrorResponse(res);
+  }
+};
+
+const updateParentTaskStatus = async (parentTaskId) => {
+  const parentTask = await TaskModel.findByPk(parentTaskId, { include: 'subTasks' });
+
+  if (!parentTask) return;
+
+  const allSubtasksCompleted = parentTask.subTasks.every(subtask => subtask.status === 'COMPLETED');
+
+  const newStatus = allSubtasksCompleted ? 'COMPLETED' : 'PENDING';
 
   await TaskModel.update(
     {
-      status: status,
+      status: newStatus,
     },
-    { where: { id: id } }
+    { where: { id: parentTaskId } }
   );
 
-  return successResponse('Task status updated', null, res);
+  if (parentTask.parent_task_id) {
+    await updateParentTaskStatus(parentTask.parent_task_id);
+  }
+};
+
+const updateChildTasksStatus = async (parentTaskId, newStatus) => {
+  const childTasks = await TaskModel.findAll({ where: { parent_task_id: parentTaskId } });
+
+  for (const childTask of childTasks) {
+    await TaskModel.update(
+      {
+        status: newStatus,
+      },
+      { where: { id: childTask.id } }
+    );
+
+    await updateChildTasksStatus(childTask.id, newStatus);
+  }
 };

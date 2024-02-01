@@ -218,6 +218,43 @@
                 }
             }
         },
+        "/tasks/completion-summary/by-day/{day}": {
+            "get": {
+                "tags": [
+                    "TASK OPERATIONS"
+                ],
+                "summary": "Get Tasks Completion Summary By Day",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "day",
+                        "example": "YYYY-MM-DD",
+                        "type": "string",
+                        "required": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/tasks/change-status/{id}/{status}": {
             "put": {
                 "tags": [

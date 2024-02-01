@@ -152,6 +152,188 @@ describe('Task module test', () => {
     });
   });
 
+  describe('Task status update feature test', () => {
+    test('Should update task status to COMPLETED', async () => {
+      const taskToCreate = {
+        name: 'Task to update status',
+        description: 'Description for Task to update status',
+      };
+
+      const createdTaskResponse = await request
+        .post('/tasks/create')
+        .send(taskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const taskId = createdTaskResponse.body.data.id;
+
+      const response = await request
+        .put(`/tasks/change-status/${taskId}/COMPLETED`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(response.status).toBe(200);
+
+      const updatedTaskResponse = await request
+        .get(`/tasks/by-id/${taskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(updatedTaskResponse.status).toBe(200);
+      expect(updatedTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+    });
+
+    test('Should return 400 error response code when updating task status with invalid status', async () => {
+      const taskToCreate = {
+        name: 'Task to update status',
+        description: 'Description for Task to update status',
+      };
+
+      const createdTaskResponse = await request
+        .post('/tasks/create')
+        .send(taskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const taskId = createdTaskResponse.body.data.id;
+
+      const response = await request
+        .put(`/tasks/change-status/${taskId}/INVALID_STATUS`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(response.status).toBe(400);
+    });
+
+    test('Should update task status and propagate changes to parent task', async () => {
+      const parentTaskToCreate = {
+        name: 'Parent Task',
+        description: 'Description for Parent Task',
+      };
+
+      const parentTaskResponse = await request
+        .post('/tasks/create')
+        .send(parentTaskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const parentTaskId = parentTaskResponse.body.data.id;
+
+      const childTaskToCreate = {
+        name: 'Child Task',
+        description: 'Description for Child Task',
+        parent_task_id: parentTaskId,
+      };
+
+      const childTaskResponse = await request
+        .post('/tasks/create')
+        .send(childTaskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const childTaskId = childTaskResponse.body.data.id;
+
+      const markChildTaskResponse = await request
+        .put(`/tasks/change-status/${childTaskId}/COMPLETED`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(markChildTaskResponse.status).toBe(200);
+
+      const updatedParentTaskResponse = await request
+        .get(`/tasks/by-id/${parentTaskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(updatedParentTaskResponse.status).toBe(200);
+      expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+    });
+
+    test('Should update task status and propagate changes to child tasks', async () => {
+      const parentTaskToCreate = {
+        name: 'Parent Task',
+        description: 'Description for Parent Task',
+      };
+
+      const parentTaskResponse = await request
+        .post('/tasks/create')
+        .send(parentTaskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const parentTaskId = parentTaskResponse.body.data.id;
+
+      const childTaskToCreate = {
+        name: 'Child Task',
+        description: 'Description for Child Task',
+        parent_task_id: parentTaskId,
+      };
+
+      const childTaskResponse = await request
+        .post('/tasks/create')
+        .send(childTaskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const childTaskId = childTaskResponse.body.data.id;
+
+      const markParentTaskResponse = await request
+        .put(`/tasks/change-status/${parentTaskId}/COMPLETED`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(markParentTaskResponse.status).toBe(200);
+
+      const updatedParentTaskResponse = await request
+        .get(`/tasks/by-id/${childTaskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      expect(updatedParentTaskResponse.status).toBe(200);
+      expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+    });
+  });
+
+  describe('Task completion summary feature test', () => {
+    test('Should return completion summary for a valid date', async () => {
+      await TaskModel.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+      });
+      
+      const taskToCreate = {
+        name: 'Task for completion summary',
+        description: 'Description for completion summary',
+      };
+  
+      const createdTaskResponse = await request
+        .post('/tasks/create')
+        .send(taskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      const taskId = createdTaskResponse.body.data.id;
+  
+      await request
+        .put(`/tasks/change-status/${taskId}/COMPLETED`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      const today = new Date().toISOString().split('T')[0];
+  
+      const response = await request
+        .get(`/tasks/completion-summary/by-day/${today}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      console.log(response.body);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body.data).toHaveProperty('date', today);
+      expect(response.body.data).toHaveProperty('totalCompletedTasks', 1);
+      expect(response.body.data).toHaveProperty('completedTasks');
+      expect(response.body.data.completedTasks).toBeInstanceOf(Array);
+      expect(response.body.data.completedTasks.length).toBe(1);
+    });
+  
+    test('Should return error for invalid date format', async () => {
+      const invalidDate = '20-01-4020'; 
+  
+      const response = await request
+        .get(`/tasks/completion-summary/by-day/${invalidDate}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(response.status).toBe(400);
+    });
+
+  });
+  
+
   afterAll(async () => {
     await UserModel.destroy({
       where: {},
