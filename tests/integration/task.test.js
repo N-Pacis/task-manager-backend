@@ -18,6 +18,7 @@ describe('Task module test', () => {
     };
     const userCreationResponse = await request.post('/users/register').send(userToCreate);
     user_id = userCreationResponse.body.data.id;
+    console.log("USER ID",user_id);
 
     const response = await request.post('/users/login').send(userToCreate);
     auth_token = response.body.data.access_token;
