@@ -114,7 +114,7 @@ export const updateTask = async (req, res) => {
       { where: { id: id } }
     );
 
-    return successResponse("Task updated successfully", task, res);
+    return successResponse("Task updated successfully", null, res);
   } catch (ex) {
     return serverErrorResponse(ex, res);
   }
