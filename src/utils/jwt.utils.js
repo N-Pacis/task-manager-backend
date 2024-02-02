@@ -8,7 +8,7 @@ const secret = process.env.JWT_KEY || '';
 
 export const signToken = (payload) => {
   const iat = Math.floor(Date.now() / 1000);
-  const exp = Math.floor(Date.now() / 1000) + 18000;
+  const exp = Math.floor(Date.now() / 1000) + 180000;
   const jti = uuidv4();
 
   const token = jwt.sign(

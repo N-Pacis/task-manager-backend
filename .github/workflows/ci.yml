@@ -9,10 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        retry-max-attempts: [1, 2, 3]
-
     services:
       postgres:
         image: postgres:latest
@@ -71,10 +67,6 @@ jobs:
       
       - name: Run tests
         run: npm test
-
-      - name: Retry if failed
-        if: ${{ matrix.retry-max-attempts != 1 && failure() }}
-        run: exit 1
 
   deploy:
     needs: test
