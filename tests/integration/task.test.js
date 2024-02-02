@@ -423,11 +423,11 @@ describe('Task module test', () => {
   });
   
   afterAll(async () => {
-    await UserModel.destroy({
-      where: {},
-      truncate: true,
-      cascade: true,
-    });
+    // await UserModel.destroy({
+    //   where: {},
+    //   truncate: true,
+    //   cascade: true,
+    // });
     await TaskModel.destroy({
       where: {},
       truncate: true,
