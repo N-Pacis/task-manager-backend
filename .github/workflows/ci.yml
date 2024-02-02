@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          
+
       - name: Install dockerize
         run: |
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
@@ -67,6 +67,7 @@ jobs:
       
       - name: Run tests
         run: npm test
+        timeout-minutes: 5 
 
   deploy:
     needs: test
