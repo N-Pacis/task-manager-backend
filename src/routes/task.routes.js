@@ -14,7 +14,7 @@ router.get("/completion-summary/by-day/:day", getCompletionSummaryForDay)
 
 router.put("/change-status/:id/:status", changeTaskStatus)
 
-router.put("/edit/:id", updateTask)
+router.put("/edit/:id", validateTaskCreation, updateTask)
 
 router.delete("/delete/:id", deleteTask)
 

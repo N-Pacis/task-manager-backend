@@ -12,6 +12,7 @@ export const createTask = async (req, res) => {
   try {
     let { name, description, parent_task_id } = req.body;
     const {id} = req.user
+    if(!id) return errorResponse("You are not authorized to do this", res)
 
     if (parent_task_id != null) {
       let findTaskById = await TaskModel.findByPk(parent_task_id);
