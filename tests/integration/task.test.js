@@ -389,7 +389,6 @@ describe('Task module test', () => {
         .send(taskToCreate)
         .set('auth-token', `Bearer ${auth_token}`);
   
-      console.log(createdTaskResponse);
       const parentTaskId = createdTaskResponse.body.data.id;
   
       const childTaskToCreate = {
