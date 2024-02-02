@@ -51,12 +51,17 @@ export const register = async(req,res)=>{
     const salt = await genSalt(10);
     password = await hash(password, salt);
 
-    await UserModel.create({
+    let createdUser = await UserModel.create({
       username,
       password
     })
 
-    return createSuccessResponse("User registered successfully. You can now login", {}, res);
+    const returnResponse ={
+      id: createdUser.get('id'),
+      username: createdUser.get('username')
+    }
+
+    return createSuccessResponse("User registered successfully. You can now login", returnResponse, res);
 
   }
   catch(error){

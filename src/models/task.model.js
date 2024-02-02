@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../utils/database.js';
+import UserModel from './user.model.js';
 
 const TaskModel = sequelize.define('tasks', {
   id: {
@@ -23,6 +24,16 @@ const TaskModel = sequelize.define('tasks', {
     type: DataTypes.ENUM('COMPLETED', 'PENDING'),
     defaultValue: 'PENDING',
     allowNull: false,
+  },
+  created_by: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: UserModel,
+      key: 'id',
+    },
+    onUpdate: 'cascade',
+    onDelete: 'cascade',
+    allowNull: true,
   }
 },{
   timestamps: true,

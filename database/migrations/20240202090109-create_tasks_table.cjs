@@ -25,6 +25,16 @@ module.exports = {
         defaultValue: 'PENDING',
         allowNull: false,
       },
+      created_by: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
+        allowNull: true,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

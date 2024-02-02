@@ -8,6 +8,7 @@ const request = supertest(app);
 
 describe('Task module test', () => {
   let auth_token;
+  let user_id;
   beforeAll(async () => {
     await connectDB();
 
@@ -15,7 +16,9 @@ describe('Task module test', () => {
       username: 'test_login',
       password: 'test123',
     };
-    await request.post('/users/register').send(userToCreate);
+    const userCreationResponse = await request.post('/users/register').send(userToCreate);
+    user_id = userCreationResponse.body.data.id;
+
     const response = await request.post('/users/login').send(userToCreate);
     auth_token = response.body.data.access_token;
   });
@@ -41,6 +44,7 @@ describe('Task module test', () => {
         taskToCreate.description
       );
       expect(response.body.data).toHaveProperty('status', 'PENDING');
+      expect(response.body.data.created_by).toBe(user_id);
     });
 
     test('Should return 400 error response code when creating a task with invalid data', async () => {
@@ -311,7 +315,6 @@ describe('Task module test', () => {
         .get(`/tasks/completion-summary/by-day/${today}`)
         .set('auth-token', `Bearer ${auth_token}`);
   
-      console.log(response.body);
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('data');
       expect(response.body.data).toHaveProperty('date', today);
@@ -332,8 +335,121 @@ describe('Task module test', () => {
     });
 
   });
-  
 
+  describe('Task updating feature test', () => {
+    test('Should update task details', async () => {
+      const taskToCreate = {
+        name: 'Task to update',
+        description: 'Description for Task to update',
+      };
+  
+      const createdTaskResponse = await request
+        .post('/tasks/create')
+        .send(taskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      const taskId = createdTaskResponse.body.data.id;
+  
+      const updatedTaskDetails = {
+        name: 'Updated Task',
+        description: 'Updated description for the task',
+      };
+  
+      const updateResponse = await request
+        .put(`/tasks/edit/${taskId}`)
+        .send(updatedTaskDetails)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(updateResponse.status).toBe(200);
+  
+      const updatedTaskResponse = await request
+        .get(`/tasks/by-id/${taskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(updatedTaskResponse.status).toBe(200);
+      expect(updatedTaskResponse.body.data).toHaveProperty('name', 'Updated Task');
+      expect(updatedTaskResponse.body.data).toHaveProperty('description', 'Updated description for the task');
+    });
+  
+    test('Should return 404 not found when updating a non-existing task', async () => {
+      const nonExistingTaskId = 999;
+  
+      const updatedTaskDetails = {
+        name: 'Updated Task',
+        description: 'Updated description for the task',
+      };
+  
+      const updateResponse = await request
+        .put(`/tasks/edit/${nonExistingTaskId}`)
+        .send(updatedTaskDetails)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(updateResponse.status).toBe(404);
+    });
+  });
+  
+  describe('Task deletion feature test', () => {
+    test('Should delete a task and its children', async () => {
+      await TaskModel.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+      });
+      
+      const taskToCreate = {
+        name: 'Task for deletion',
+        description: 'Description for deletion',
+      };
+  
+      const createdTaskResponse = await request
+        .post('/tasks/create')
+        .send(taskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      const parentTaskId = createdTaskResponse.body.data.id;
+  
+      const childTaskToCreate = {
+        name: 'Child Task',
+        description: 'Description for Child Task',
+        parent_task_id: parentTaskId,
+      };
+
+      const createChildTaskResponse = await request
+        .post('/tasks/create')
+        .send(childTaskToCreate)
+        .set('auth-token', `Bearer ${auth_token}`);
+      
+      const childTaskId = createChildTaskResponse.body.data.id;
+
+      const response = await request
+        .delete(`/tasks/delete/${parentTaskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const findParentTaskResponse = await request
+        .get(`/tasks/by-id/${parentTaskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+
+      const findChildTaskResponse = await request
+        .get(`/tasks/by-id/${childTaskId}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(response.status).toBe(200);
+      expect(findParentTaskResponse.status).toBe(404);
+      expect(findChildTaskResponse.status).toBe(404);
+    });
+  
+    test('Should return error for invalid date format', async () => {
+      const invalidDate = '20-01-4020'; 
+  
+      const response = await request
+        .get(`/tasks/completion-summary/by-day/${invalidDate}`)
+        .set('auth-token', `Bearer ${auth_token}`);
+  
+      expect(response.status).toBe(400);
+    });
+
+  });
+  
   afterAll(async () => {
     await UserModel.destroy({
       where: {},
