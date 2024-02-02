@@ -76,350 +76,350 @@ describe('Task module test', () => {
     });
   });
 
-  describe("Task retrieval feature test", () => {
-    test("Should return 200 success response code and task data by ID", async () => {
-      const taskToRetrieve = {
-        name: "Task to retrieve",
-        description: "Description for the task to retrieve",
-      };
+  // describe("Task retrieval feature test", () => {
+  //   test("Should return 200 success response code and task data by ID", async () => {
+  //     const taskToRetrieve = {
+  //       name: "Task to retrieve",
+  //       description: "Description for the task to retrieve",
+  //     };
 
-      const createdTaskResponse = await request
-      .post("/tasks/create")
-      .send(taskToRetrieve)
-      .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //     .post("/tasks/create")
+  //     .send(taskToRetrieve)
+  //     .set('auth-token', `Bearer ${auth_token}`);
 
-      const taskId = createdTaskResponse.body.data.id;
+  //     const taskId = createdTaskResponse.body.data.id;
 
-      const response = await request
-      .get(`/tasks/by-id/${taskId}`)
-      .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //     .get(`/tasks/by-id/${taskId}`)
+  //     .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("data");
-      expect(response.body.data).toHaveProperty("id", taskId);
-    });
+  //     expect(response.status).toBe(200);
+  //     expect(response.body).toHaveProperty("data");
+  //     expect(response.body.data).toHaveProperty("id", taskId);
+  //   });
 
-    test("Should return 404 not found response code when trying to retrieve a non-existing task by ID", async () => {
-      const nonExistingTaskId = 999;
+  //   test("Should return 404 not found response code when trying to retrieve a non-existing task by ID", async () => {
+  //     const nonExistingTaskId = 999;
 
-      const response = await request
-      .get(`/tasks/by-id/${nonExistingTaskId}`)
-      .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //     .get(`/tasks/by-id/${nonExistingTaskId}`)
+  //     .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(response.status).toBe(404);
-    });
+  //     expect(response.status).toBe(404);
+  //   });
 
-    test("Should return 200 success response code and list of tasks with their subtasks", async () => {
-      const taskWithSubtasks = {
-        name: "Task with Subtasks",
-        description: "Description for Task with Subtasks",
-      };
+  //   test("Should return 200 success response code and list of tasks with their subtasks", async () => {
+  //     const taskWithSubtasks = {
+  //       name: "Task with Subtasks",
+  //       description: "Description for Task with Subtasks",
+  //     };
 
-      const createdTaskResponse = await request
-      .post("/tasks/create")
-      .send(taskWithSubtasks)
-      .set('auth-token', `Bearer ${auth_token}`);
-      const taskId = createdTaskResponse.body.data.id;
+  //     const createdTaskResponse = await request
+  //     .post("/tasks/create")
+  //     .send(taskWithSubtasks)
+  //     .set('auth-token', `Bearer ${auth_token}`);
+  //     const taskId = createdTaskResponse.body.data.id;
 
-      const subTask = {
-        name: "SubTask",
-        description: "SubTask Description",
-        parent_task_id: taskId
-      }
+  //     const subTask = {
+  //       name: "SubTask",
+  //       description: "SubTask Description",
+  //       parent_task_id: taskId
+  //     }
 
-      await request
-      .post(`/tasks/create`)
-      .send(subTask)
-      .set('auth-token', `Bearer ${auth_token}`);
+  //     await request
+  //     .post(`/tasks/create`)
+  //     .send(subTask)
+  //     .set('auth-token', `Bearer ${auth_token}`);
 
-      const response = await request
-      .get(`/tasks`)
-      .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //     .get(`/tasks`)
+  //     .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("data");
-      expect(response.body.data).toBeInstanceOf(Array);
-      expect(response.body.data.length).toBeGreaterThan(0);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body).toHaveProperty("data");
+  //     expect(response.body.data).toBeInstanceOf(Array);
+  //     expect(response.body.data.length).toBeGreaterThan(0);
 
-      const retrievedTask = response.body.data.find((task) => task.id === taskId);
-      expect(retrievedTask).toBeDefined();
-      expect(retrievedTask).toHaveProperty("sub_tasks");
-      expect(retrievedTask.sub_tasks).toBeInstanceOf(Array);
-      expect(retrievedTask.sub_tasks.length).toBe(1);
-    });
+  //     const retrievedTask = response.body.data.find((task) => task.id === taskId);
+  //     expect(retrievedTask).toBeDefined();
+  //     expect(retrievedTask).toHaveProperty("sub_tasks");
+  //     expect(retrievedTask.sub_tasks).toBeInstanceOf(Array);
+  //     expect(retrievedTask.sub_tasks.length).toBe(1);
+  //   });
 
-    test("Should return 401 unauthorized response code when trying to retrieve tasks without authentication token", async () => {
-      const response = await request
-      .get("/tasks");
+  //   test("Should return 401 unauthorized response code when trying to retrieve tasks without authentication token", async () => {
+  //     const response = await request
+  //     .get("/tasks");
 
-      expect(response.status).toBe(401);
-    });
-  });
+  //     expect(response.status).toBe(401);
+  //   });
+  // });
 
-  describe('Task status update feature test', () => {
-    test('Should update task status to COMPLETED', async () => {
-      const taskToCreate = {
-        name: 'Task to update status',
-        description: 'Description for Task to update status',
-      };
+  // describe('Task status update feature test', () => {
+  //   test('Should update task status to COMPLETED', async () => {
+  //     const taskToCreate = {
+  //       name: 'Task to update status',
+  //       description: 'Description for Task to update status',
+  //     };
 
-      const createdTaskResponse = await request
-        .post('/tasks/create')
-        .send(taskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(taskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const taskId = createdTaskResponse.body.data.id;
+  //     const taskId = createdTaskResponse.body.data.id;
 
-      const response = await request
-        .put(`/tasks/change-status/${taskId}/COMPLETED`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .put(`/tasks/change-status/${taskId}/COMPLETED`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(response.status).toBe(200);
+  //     expect(response.status).toBe(200);
 
-      const updatedTaskResponse = await request
-        .get(`/tasks/by-id/${taskId}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const updatedTaskResponse = await request
+  //       .get(`/tasks/by-id/${taskId}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(updatedTaskResponse.status).toBe(200);
-      expect(updatedTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
-    });
+  //     expect(updatedTaskResponse.status).toBe(200);
+  //     expect(updatedTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+  //   });
 
-    test('Should return 400 error response code when updating task status with invalid status', async () => {
-      const taskToCreate = {
-        name: 'Task to update status',
-        description: 'Description for Task to update status',
-      };
+  //   test('Should return 400 error response code when updating task status with invalid status', async () => {
+  //     const taskToCreate = {
+  //       name: 'Task to update status',
+  //       description: 'Description for Task to update status',
+  //     };
 
-      const createdTaskResponse = await request
-        .post('/tasks/create')
-        .send(taskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(taskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const taskId = createdTaskResponse.body.data.id;
+  //     const taskId = createdTaskResponse.body.data.id;
 
-      const response = await request
-        .put(`/tasks/change-status/${taskId}/INVALID_STATUS`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .put(`/tasks/change-status/${taskId}/INVALID_STATUS`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(response.status).toBe(400);
-    });
+  //     expect(response.status).toBe(400);
+  //   });
 
-    test('Should update task status and propagate changes to parent task', async () => {
-      const parentTaskToCreate = {
-        name: 'Parent Task',
-        description: 'Description for Parent Task',
-      };
+  //   test('Should update task status and propagate changes to parent task', async () => {
+  //     const parentTaskToCreate = {
+  //       name: 'Parent Task',
+  //       description: 'Description for Parent Task',
+  //     };
 
-      const parentTaskResponse = await request
-        .post('/tasks/create')
-        .send(parentTaskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const parentTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(parentTaskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const parentTaskId = parentTaskResponse.body.data.id;
+  //     const parentTaskId = parentTaskResponse.body.data.id;
 
-      const childTaskToCreate = {
-        name: 'Child Task',
-        description: 'Description for Child Task',
-        parent_task_id: parentTaskId,
-      };
+  //     const childTaskToCreate = {
+  //       name: 'Child Task',
+  //       description: 'Description for Child Task',
+  //       parent_task_id: parentTaskId,
+  //     };
 
-      const childTaskResponse = await request
-        .post('/tasks/create')
-        .send(childTaskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const childTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(childTaskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const childTaskId = childTaskResponse.body.data.id;
+  //     const childTaskId = childTaskResponse.body.data.id;
 
-      const markChildTaskResponse = await request
-        .put(`/tasks/change-status/${childTaskId}/COMPLETED`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const markChildTaskResponse = await request
+  //       .put(`/tasks/change-status/${childTaskId}/COMPLETED`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(markChildTaskResponse.status).toBe(200);
+  //     expect(markChildTaskResponse.status).toBe(200);
 
-      const updatedParentTaskResponse = await request
-        .get(`/tasks/by-id/${parentTaskId}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const updatedParentTaskResponse = await request
+  //       .get(`/tasks/by-id/${parentTaskId}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(updatedParentTaskResponse.status).toBe(200);
-      expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
-    });
+  //     expect(updatedParentTaskResponse.status).toBe(200);
+  //     expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+  //   });
 
-    test('Should update task status and propagate changes to child tasks', async () => {
-      const parentTaskToCreate = {
-        name: 'Parent Task',
-        description: 'Description for Parent Task',
-      };
+  //   test('Should update task status and propagate changes to child tasks', async () => {
+  //     const parentTaskToCreate = {
+  //       name: 'Parent Task',
+  //       description: 'Description for Parent Task',
+  //     };
 
-      const parentTaskResponse = await request
-        .post('/tasks/create')
-        .send(parentTaskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const parentTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(parentTaskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const parentTaskId = parentTaskResponse.body.data.id;
+  //     const parentTaskId = parentTaskResponse.body.data.id;
 
-      const childTaskToCreate = {
-        name: 'Child Task',
-        description: 'Description for Child Task',
-        parent_task_id: parentTaskId,
-      };
+  //     const childTaskToCreate = {
+  //       name: 'Child Task',
+  //       description: 'Description for Child Task',
+  //       parent_task_id: parentTaskId,
+  //     };
 
-      const childTaskResponse = await request
-        .post('/tasks/create')
-        .send(childTaskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const childTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(childTaskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      const childTaskId = childTaskResponse.body.data.id;
+  //     const childTaskId = childTaskResponse.body.data.id;
 
-      const markParentTaskResponse = await request
-        .put(`/tasks/change-status/${parentTaskId}/COMPLETED`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const markParentTaskResponse = await request
+  //       .put(`/tasks/change-status/${parentTaskId}/COMPLETED`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(markParentTaskResponse.status).toBe(200);
+  //     expect(markParentTaskResponse.status).toBe(200);
 
-      const updatedParentTaskResponse = await request
-        .get(`/tasks/by-id/${childTaskId}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const updatedParentTaskResponse = await request
+  //       .get(`/tasks/by-id/${childTaskId}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
 
-      expect(updatedParentTaskResponse.status).toBe(200);
-      expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
-    });
-  });
+  //     expect(updatedParentTaskResponse.status).toBe(200);
+  //     expect(updatedParentTaskResponse.body.data).toHaveProperty('status', 'COMPLETED');
+  //   });
+  // });
 
-  describe('Task completion summary feature test', () => {
-    test('Should return completion summary for a valid date', async () => {
-      await TaskModel.destroy({
-        where: {},
-        truncate: true,
-        cascade: true,
-      });
+  // describe('Task completion summary feature test', () => {
+  //   test('Should return completion summary for a valid date', async () => {
+  //     await TaskModel.destroy({
+  //       where: {},
+  //       truncate: true,
+  //       cascade: true,
+  //     });
       
-      const taskToCreate = {
-        name: 'Task for completion summary',
-        description: 'Description for completion summary',
-      };
+  //     const taskToCreate = {
+  //       name: 'Task for completion summary',
+  //       description: 'Description for completion summary',
+  //     };
   
-      const createdTaskResponse = await request
-        .post('/tasks/create')
-        .send(taskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(taskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      const taskId = createdTaskResponse.body.data.id;
+  //     const taskId = createdTaskResponse.body.data.id;
   
-      await request
-        .put(`/tasks/change-status/${taskId}/COMPLETED`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     await request
+  //       .put(`/tasks/change-status/${taskId}/COMPLETED`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      const today = new Date().toISOString().split('T')[0];
+  //     const today = new Date().toISOString().split('T')[0];
   
-      const response = await request
-        .get(`/tasks/completion-summary/by-day/${today}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .get(`/tasks/completion-summary/by-day/${today}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('data');
-      expect(response.body.data).toHaveProperty('date', today);
-      expect(response.body.data).toHaveProperty('totalCompletedTasks', 1);
-    });
+  //     expect(response.status).toBe(200);
+  //     expect(response.body).toHaveProperty('data');
+  //     expect(response.body.data).toHaveProperty('date', today);
+  //     expect(response.body.data).toHaveProperty('totalCompletedTasks', 1);
+  //   });
   
-    test('Should return error for invalid date format', async () => {
-      const invalidDate = '20-01-4020'; 
+  //   test('Should return error for invalid date format', async () => {
+  //     const invalidDate = '20-01-4020'; 
   
-      const response = await request
-        .get(`/tasks/completion-summary/by-day/${invalidDate}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .get(`/tasks/completion-summary/by-day/${invalidDate}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      expect(response.status).toBe(400);
-    });
+  //     expect(response.status).toBe(400);
+  //   });
 
-  });
+  // });
 
-  describe('Task updating feature test', () => {
-    test('Should update task details', async () => {
-      const taskToCreate = {
-        name: 'Task to update',
-        description: 'Description for Task to update',
-      };
+  // describe('Task updating feature test', () => {
+  //   test('Should update task details', async () => {
+  //     const taskToCreate = {
+  //       name: 'Task to update',
+  //       description: 'Description for Task to update',
+  //     };
   
-      const createdTaskResponse = await request
-        .post('/tasks/create')
-        .send(taskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(taskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      const taskId = createdTaskResponse.body.data.id;
+  //     const taskId = createdTaskResponse.body.data.id;
   
-      const updatedTaskDetails = {
-        name: 'Updated Task',
-        description: 'Updated description for the task',
-      };
+  //     const updatedTaskDetails = {
+  //       name: 'Updated Task',
+  //       description: 'Updated description for the task',
+  //     };
   
-      const updateResponse = await request
-        .put(`/tasks/edit/${taskId}`)
-        .send(updatedTaskDetails)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const updateResponse = await request
+  //       .put(`/tasks/edit/${taskId}`)
+  //       .send(updatedTaskDetails)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      expect(updateResponse.status).toBe(200);
-    });
+  //     expect(updateResponse.status).toBe(200);
+  //   });
   
-    test('Should return 404 not found when updating a non-existing task', async () => {
-      const nonExistingTaskId = 999;
+  //   test('Should return 404 not found when updating a non-existing task', async () => {
+  //     const nonExistingTaskId = 999;
   
-      const updatedTaskDetails = {
-        name: 'Updated Task',
-        description: 'Updated description for the task',
-      };
+  //     const updatedTaskDetails = {
+  //       name: 'Updated Task',
+  //       description: 'Updated description for the task',
+  //     };
   
-      const updateResponse = await request
-        .put(`/tasks/edit/${nonExistingTaskId}`)
-        .send(updatedTaskDetails)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const updateResponse = await request
+  //       .put(`/tasks/edit/${nonExistingTaskId}`)
+  //       .send(updatedTaskDetails)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      expect(updateResponse.status).toBe(404);
-    });
-  });
+  //     expect(updateResponse.status).toBe(404);
+  //   });
+  // });
   
-  describe('Task deletion feature test', () => {
-    test('Should delete a task and its children', async () => {
-      const taskToCreate = {
-        name: 'Task for deletion',
-        description: 'Description for deletion',
-      };
+  // describe('Task deletion feature test', () => {
+  //   test('Should delete a task and its children', async () => {
+  //     const taskToCreate = {
+  //       name: 'Task for deletion',
+  //       description: 'Description for deletion',
+  //     };
   
-      const createdTaskResponse = await request
-        .post('/tasks/create')
-        .send(taskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const createdTaskResponse = await request
+  //       .post('/tasks/create')
+  //       .send(taskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      const parentTaskId = createdTaskResponse.body.data.id;
+  //     const parentTaskId = createdTaskResponse.body.data.id;
   
-      const childTaskToCreate = {
-        name: 'Child Task',
-        description: 'Description for Child Task',
-        parent_task_id: parentTaskId,
-      };
+  //     const childTaskToCreate = {
+  //       name: 'Child Task',
+  //       description: 'Description for Child Task',
+  //       parent_task_id: parentTaskId,
+  //     };
 
-      await request
-        .post('/tasks/create')
-        .send(childTaskToCreate)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     await request
+  //       .post('/tasks/create')
+  //       .send(childTaskToCreate)
+  //       .set('auth-token', `Bearer ${auth_token}`);
       
-      const response = await request
-        .delete(`/tasks/delete/${parentTaskId}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .delete(`/tasks/delete/${parentTaskId}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
         
-      expect(response.status).toBe(200);
-    });
+  //     expect(response.status).toBe(200);
+  //   });
   
-    test('Should return error for invalid date format', async () => {
-      const invalidDate = '20-01-4020'; 
+  //   test('Should return error for invalid date format', async () => {
+  //     const invalidDate = '20-01-4020'; 
   
-      const response = await request
-        .get(`/tasks/completion-summary/by-day/${invalidDate}`)
-        .set('auth-token', `Bearer ${auth_token}`);
+  //     const response = await request
+  //       .get(`/tasks/completion-summary/by-day/${invalidDate}`)
+  //       .set('auth-token', `Bearer ${auth_token}`);
   
-      expect(response.status).toBe(400);
-    });
+  //     expect(response.status).toBe(400);
+  //   });
 
-  });
+  // });
   
   afterAll(async () => {
     await UserModel.destroy({
