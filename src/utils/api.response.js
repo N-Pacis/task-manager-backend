@@ -54,6 +54,7 @@ export const notFoundResponse = (
 };
 
 export const serverErrorResponse = (ex, res) => {
+  console.log(ex)
     res.status(500).json({
       status: 500,
       message: 'Server Error',

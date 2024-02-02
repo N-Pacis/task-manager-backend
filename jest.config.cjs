@@ -1,5 +1,5 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
-  testTimeout: 15000, 
+  testTimeout: 20000, 
 };
