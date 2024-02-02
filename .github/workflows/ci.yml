@@ -41,6 +41,11 @@ jobs:
           echo "DB_NAME=${DB_NAME}" >> $GITHUB_ENV
           echo "JWT_KEY=${JWT_KEY}" >> $GITHUB_ENV
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
       - name: Install dockerize
         run: |
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
